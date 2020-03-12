@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>Getting Started Extension's Popup</title>
+  <style type="text/css">
+    body {
+      display: block;
+      width: 600px;
+      height: 700px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      margin-right: 20px;
+      margin-left: 20px;
+      white-space: nowrap;
+    }
+
+    h1 {
+      font-size: 20px;
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+
+    h3 {
+      font-size: 16px;
+      margin-left: 100px;
+    }
+
+    #container {
+      align-items: center;
+      margin-right: 100px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    button {
+      display: inline-block;
+      border-radius: 4px;
+      background-color: #f4511e;
+      border: none;
+      color: #FFFFFF;
+      text-align: center;
+      font-size: 16px;
+      padding: 5px;
+      width: 200px;
+      transition: all 0.5s;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    button span {
+      cursor: pointer;
+      display: inline-block;
+      position: relative;
+      transition: 0.5s;
+    }
+
+    button span:after {
+      content: '\00bb';
+      position: absolute;
+      opacity: 0;
+      top: 0;
+      right: -20px;
+      transition: 0.5s;
+    }
+
+    button:hover span {
+      padding-right: 30px;
+    }
+
+    button:hover span:after {
+      opacity: 1;
+      right: 0;
+    }
+  </style>
+</head>
+
+<body id='body1'>
+  <center>
+    <h1>Selected Authentication Mode</h1>
+    <div id="current_tabs" style="border:2px orange solid;">
+      <center>
+        <h2>Current URL</h2>
+        <img id="image" alt="URL icon">
+        <p id="url"></P>
+    </div>
+    <h2>username:
+      <input type="text" name="username" value="" id="username">
+    </h2>
+    <div id="container">
+      <h3>Choose Authentication mode </h3>
+      <select id="dropdown">
+        <option selected disabled hidden value=''></option>
+        <option value="PC_model">PC Authentication mode</option>
+        <option value="P_model">P Authentication mode</option>
+      </select>
+    </div>
+    <center><button id="Connect_button"><span>Connect</span></button>
+      <div id="canvas">
+        <canvas id="myCanvas"></canvas>
+      </div>
+      <script src="popup.js"></script>
+</body>
+
+</html>
