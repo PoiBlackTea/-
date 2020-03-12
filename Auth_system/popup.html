@@ -81,10 +81,9 @@
   <center>
     <h1>Selected Authentication Mode</h1>
     <div id="current_tabs" style="border:2px orange solid;">
-      <center>
-        <h2>Current URL</h2>
-        <img id="image" alt="URL icon">
-        <p id="url"></P>
+      <h2>Current URL</h2>
+      <img id="image" alt="URL icon">
+      <p id="url"></P>
     </div>
     <h2>username:
       <input type="text" name="username" value="" id="username">
@@ -97,11 +96,16 @@
         <option value="P_model">P Authentication mode</option>
       </select>
     </div>
-    <center><button id="Connect_button"><span>Connect</span></button>
-      <div id="canvas">
-        <canvas id="myCanvas"></canvas>
-      </div>
-      <script src="popup.js"></script>
+    <button id="Connect_button"><span>Connect</span></button>
+    <div id="canvas">
+      <canvas id="myCanvas"></canvas>
+      <h3 id="password_title" style="display:none">password:
+        <input type="password" name="password" value="" id="password">
+      </h3>
+    </div>
+    <button id="Auth_button" style="display:none"><span>Authentication</span></button>
+    <script src="popup.js"></script>
+    <script src="auth.js"></script>
 </body>
 
 </html>

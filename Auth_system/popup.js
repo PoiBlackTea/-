@@ -1,15 +1,23 @@
 document.addEventListener('DOMContentLoaded', (MouseEvent) => {
     document.getElementById('Connect_button').addEventListener("click", test);
+
     var query = {
         active: true,
         currentWindow: true
     };
     chrome.tabs.query(query, get_current_URL);
 
+
 });
 
 
 function test() {
+    console.log(document.getElementById('dropdown').value)
+    if (document.getElementById('dropdown').value == 'P_model') {
+        document.getElementById('password_title').style.display = 'block';
+        document.getElementById('myCanvas').style.display = 'none';
+        document.getElementById('Auth_button').style.display = 'block';
+    }
 
     var shuffle_array = [
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11',
@@ -60,50 +68,60 @@ function get_current_URL(tabs) {
     document.getElementById('image').src = currentTab.favIconUrl;
 }
 
-function round_rectangle() {}
+function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+    if (typeof stroke === 'undefined') {
+        stroke = true;
+    }
+    if (typeof radius === 'undefined') {
+        radius = 5;
+    }
+    if (typeof radius === 'number') {
+        radius = {
+            tl: radius,
+            tr: radius,
+            br: radius,
+            bl: radius
+        };
+    } else {
+        var defaultRadius = {
+            tl: 0,
+            tr: 0,
+            br: 0,
+            bl: 0
+        };
+        for (var side in defaultRadius) {
+            radius[side] = radius[side] || defaultRadius[side];
+        }
+    }
+    ctx.beginPath();
+    ctx.moveTo(x + radius.tl, y);
+    ctx.lineTo(x + width - radius.tr, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+    ctx.lineTo(x + width, y + height - radius.br);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+    ctx.lineTo(x + radius.bl, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+    ctx.lineTo(x, y + radius.tl);
+    ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+    ctx.closePath();
+    if (fill) {
+        ctx.fill();
+    }
+    if (stroke) {
+        ctx.stroke();
+    }
+
+}
 
 function create_keyboard() {
     let canvas = document.getElementById("myCanvas")
     let ctx = canvas.getContext("2d")
 
-    canvas.height = window.innerHeight
-    canvas.width = window.innerWidth;
-
-    //畫一個下半圓，指定顏色為白色
-    ctx.beginPath()
-    ctx.lineWidth = 3;
-    ctx.fillStyle = "#FFFFFF"
-    ctx.arc(100, 100, 50, 0, Math.PI)
-    ctx.fill()
-    ctx.stroke()
-
-    //畫一個上半圓，指定顏色為紅色
-    ctx.beginPath()
-    ctx.fillStyle = "#FF0000"
-    ctx.arc(100, 100, 50, Math.PI, Math.PI * 2)
-    ctx.fill()
-    ctx.stroke()
-
-    //畫中間的線和圈圈，指定顏色為白色
-    ctx.beginPath()
-    ctx.fillStyle = "#FFFFFF"
-    //從圓的左邊開始
-    ctx.moveTo(50, 100)
-    //連到中間後接著一個上半圓
-    ctx.arc(100, 100, 10, Math.PI, Math.PI * 2)
-    //繞過去後再畫一條直線到圓的右邊
-    ctx.lineTo(150, 100)
-    //最後沿著線繞回來畫一個下半圓
-    ctx.arc(100, 100, 10, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.stroke()
-
-    //畫一個圓形，中間的那個圈圈按鈕
-    ctx.beginPath()
-    ctx.arc(100, 100, 5, 0, Math.PI * 2)
-    ctx.stroke()
+    roundRect(ctx, 5, 5, 50, 50);
+    // To change the color on the rectangle, just manipulate the context
+    ctx.strokeStyle = "rgb(255, 0, 0)";
+    ctx.fillStyle = "rgba(255, 255, 0, .5)";
 }
-
 
 function shuffle(array, SEED) {
 
