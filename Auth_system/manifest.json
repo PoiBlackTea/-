@@ -1,11 +1,12 @@
 {
   "name": "Auth System Extension",
   "description": "Press Ctrl+Shift+F to open the browser action popup, press Ctrl+Shift+Y to send an event.",
-  "version": "1.0",
+  "version": "2.0",
   "manifest_version": 2,
   "background": {
     "scripts": [
-      "event.js"
+      "background/event.js",
+      "background/SEED.js"
     ],
     "persistent": true
   },
@@ -13,14 +14,11 @@
     "default_title": "Auth System",
     "default_popup": "popup.html"
   },
+  "content_scripts": [{
+    "matches": ["*://*/*"],
+    "js": ["content.js"]
+  }],
   "commands": {
-    "toggle-feature": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+Y",
-        "mac": "MacCtrl+Shift+Y"
-      },
-      "description": "Send a 'toggle-feature' event to the extension"
-    },
     "_execute_browser_action": {
       "suggested_key": {
         "default": "Ctrl+Shift+F",

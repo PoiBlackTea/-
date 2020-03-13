@@ -1,12 +1,3 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-chrome.commands.onCommand.addListener(function (command) {
-  console.log('onCommand event received for message: ', command);
-});
-
-
 var db = {
   warning: ['https://www.kcg.gov.tw/*', 'https://kcginfo.kcg.gov.tw/*'],
   danger: ['https://www.chinatimes.com/*', 'http://www.ctitv.com.tw/*']
@@ -35,19 +26,9 @@ chrome.webRequest.onBeforeRequest.addListener(
   ['blocking']
 )
 
-chrome.webRequest.onBeforeRequest.addListener(
-  function (details) {
-    chrome.notifications.create('cancelWeb', {
-      type: 'basic',
-      iconUrl: 'icons/icon16.png',
-      title: '網站封鎖!',
-      message: '您前往的網站已封鎖，無法瀏覽！'
-    })
-    return {
-      cancel: true
-    }
-  }, {
-    urls: db.danger
+chrome.webRequest.onCompleted.addListener(
+  warningCallback, {
+    urls: db.warning
   }, //需是陣列型態
   ['blocking']
 )
