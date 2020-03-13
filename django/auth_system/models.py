@@ -42,3 +42,16 @@ class User_SEED(models.Model):
 class User_SEED_Admin(admin.ModelAdmin):
     list_display = [field.name for field in User_SEED._meta.fields]
     list_filter = ('name',)
+
+
+class Auth_user(models.Model):
+    user = models.ForeignKey(
+        User, related_name='Auth_user', on_delete=models.CASCADE)
+    username = models.CharField(max_length=512, null=True)
+    password = models.CharField(max_length=512, null=True)
+
+
+@admin.register(Auth_user)
+class User_SEED_Admin(admin.ModelAdmin):
+    list_display = [field.name for field in User_SEED._meta.fields]
+    list_filter = ('username',)

@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-{% csrf_token %}
 <html lang="en">
 
 <head>
@@ -11,10 +10,12 @@
     <form action="" method="post">
         {% csrf_token %}
         <label for="username">用戶名稱:</label>
-        <input type="text" name="username" value="" id="username"> <br />
+        <input type="text" name="username" value="" id="username"> <br>
         <label for="password">用戶密碼:</label>
-        <input type="password" name="password" value="" id="password"> <br />
-        <input type="submit" value="登入" />
+        <input type="password" name="password" value="" id="password"> <br>
+        <label for="P_password">用戶密碼:</label>
+        <input type="password" name="P_model_password" value="" id="P_model_password" style="display:none"> <br>
+        <input type="submit" value="登入" id = button>
     </form>
 </body>
 
