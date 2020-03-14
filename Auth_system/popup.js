@@ -1,91 +1,89 @@
 document.addEventListener('DOMContentLoaded', () => {
+    var SEED;
+    var username;
+    var query;
     var mode_button = document.getElementById('Connect_button');
     mode_button.addEventListener('click', () => {
-        if (document.getElementById('dropdown').value == '') {
+        username = document.getElementById('username').value;
+        if (document.getElementById('dropdown').value === '') {
+            return;
+        } else if (username === "") {
             return;
         } else if (document.getElementById('dropdown').value == 'P_model') {
-            var username = document.getElementById('username').value;
             document.getElementById('password_title').style.display = 'block';
             document.getElementById('myCanvas').style.display = 'none';
-            document.getElementById('Auth_button').style.display = 'block';
         } else if (document.getElementById('dropdown').value == 'PC_model') {
-            let username = document.getElementById('username').value;
             document.getElementById('password_title').style.display = 'none';
             document.getElementById('myCanvas').style.display = 'block';
-            document.getElementById('Auth_button').style.display = 'block';
         }
+        document.getElementById('Auth_button').style.display = 'block';
         var port = chrome.runtime.connect({
-            name: "call SEED.js"
+            name: "call SEED"
         });
         port.postMessage({
             event: "create SEED",
             name: username
         });
         port.onMessage.addListener(function (response) {
-            console.log(response);
+            SEED = response;
+            console.log(SEED);
         });
 
-        var query = {
+        query = {
             active: true,
             currentWindow: true
         };
         chrome.tabs.query(query, get_current_URL);
     });
 
-    /*
     var Auth_button = document.getElementById('Auth_button');
-    Auth_button.addEventListener("click", test2);
-    */
 
+    Auth_button.addEventListener("click", async () => {
+        var transform_password = await transform(SEED);
+        send_content(username, transform_password);
+    });
 });
 
-function test2() {
-    console.log('auth')
-    var formdata = new FormData();
-    formdata.append('username', document.getElementById('username').value);
-    formdata.append('P_password', document.getElementById('password').value);
+function transform(SEED) {
 
-
-    var result = fetch('http://127.0.0.1:8000/auth_system/P_model/', {
-            method: 'POST',
-            body: formdata
-        })
-        .then((response) => {
-            if (response.status == 200) {
-                return response.json()
-            }
-        }).catch((err) => {
-            console.log('錯誤:', err);
+    if (document.getElementById('dropdown').value == 'P_model') {
+        return new Promise((resolve) => {
+            var orignal_password = document.getElementById('password').value;
+            var port2 = chrome.runtime.connect({
+                name: "P model transform password"
+            });
+            port2.postMessage({
+                event: "transform password",
+                name: orignal_password,
+                SEED: SEED
+            });
+            port2.onMessage.addListener((response) => {
+                resolve(response['content']);
+            });
         });
-
-    result.then(result => {
-        /*
-        let bind = ''.concat(client_random, result);
-        let SEED = parseInt(SHA256(bind), 16) % Math.pow(10, 9);
-        let vb = shuffle(shuffle_array, SEED);
-        */
-        console.log(result);
-    })
+    }
 }
 
-function test() {
-
-
-
-    var shuffle_array = [
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11',
-    ];
-
-    let vb = shuffle(shuffle_array, SEED);
-    console.log(vb);
-    create_keyboard();
+function send_content(username, transform_password) {
+    //傳username和password到content.js
+    chrome.tabs.query({
+        active: true,
+        currentWindow: true
+    }, (tabs) => {
+        var port3 = chrome.tabs.connect(tabs[0].id, {
+            name: "padding password"
+        });
+        if (transform_password !== '') {
+            port3.postMessage({
+                event: "padding password",
+                username: username,
+                password: transform_password
+            });
+        }
+        port3.onMessage.addListener((response) => {
+            console.log(response);
+        });
+    });
 }
 
 function get_current_URL(tabs) {

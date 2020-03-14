@@ -1,9 +1,8 @@
 chrome.runtime.onConnect.addListener(function (port) {
-    if (port.name === "call SEED.js") {
+    if (port.name === "call SEED") {
         port.onMessage.addListener(function (message) {
             if (message.event === "create SEED") {
                 var SEED_Promise = create_SEED(message.name);
-                console.log(SEED_Promise);
             }
             SEED_Promise.then((message) => {
                 port.postMessage({
@@ -12,7 +11,48 @@ chrome.runtime.onConnect.addListener(function (port) {
                 port.disconnect();
             });
         });
-
+    };
+    if (port.name === "P model transform password") {
+        // B代表白色
+        var array = [
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
+        ];
+        var password;
+        port.onMessage.addListener(function (message) {
+            if (message.event === "transform password") {
+                var orignal_password = message.name;
+                console.log(message.SEED['content']);
+                let mt = new MersenneTwister(message.SEED['content']);
+                for (let i = array.length - 1; i > 0; i--) {
+                    let j = Math.floor(mt.rnd() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                var char = '~`!1@2#3$4%5^6&7*8(9)0_-+=QqWwEeRrTtYyUuIiOoPp{[}]|\\AaSsDdFfGgHhJjKkLl:;"\'ZzXxCcVvBbNnMm<,>.?/  '
+                password = "";
+                let r_obj = new MersenneTwister();
+                var password_length = orignal_password.length;
+                for (let i = 0; i < password_length; i++) {
+                    color_indicator = array[char.indexOf(orignal_password[i])];
+                    if (color_indicator === "B") {
+                        let j = Math.floor(r_obj.rnd() * (11));
+                        let ch_li = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A'];
+                        color_indicator = ch_li[j];
+                    }
+                    password = ''.concat(password, color_indicator);
+                }
+            }
+            port.postMessage({
+                content: password
+            });
+            port.disconnect();
+        });
     };
 });
 
@@ -28,7 +68,7 @@ function create_SEED(name) {
             method: 'POST',
             body: formdata
         })
-        .then((response) => {
+        .then(response => {
             if (response.status == 200) {
                 return response.text()
             }
@@ -41,17 +81,6 @@ function create_SEED(name) {
         });
 
     return result
-}
-
-
-function shuffle(array, SEED) {
-
-    let mt = new MersenneTwister(SEED);
-    for (let i = array.length - 1; i > 0; i--) {
-        let j = Math.floor(mt.rnd() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
 }
 
 /* download from: https://github.com/pigulla/mersennetwister */

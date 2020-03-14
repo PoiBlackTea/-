@@ -15,7 +15,7 @@
     "default_popup": "popup.html"
   },
   "content_scripts": [{
-    "matches": ["*://*/*"],
+    "matches": ["http://127.0.0.1:8000/*"],
     "js": ["content.js"]
   }],
   "commands": {
@@ -35,7 +35,7 @@
     "http://*/*",
     "https://*/*",
     "https://www.google.com/",
-    "http://httpbin.org/",
-    "http://127.0.0.1:8000/"
+    "http://127.0.0.1:8000/",
+    "storage"
   ]
 }
