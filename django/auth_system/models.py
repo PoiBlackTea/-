@@ -52,6 +52,6 @@ class Auth_user(models.Model):
 
 
 @admin.register(Auth_user)
-class User_SEED_Admin(admin.ModelAdmin):
-    list_display = [field.name for field in User_SEED._meta.fields]
+class Auth_user_Admin(admin.ModelAdmin):
+    list_display = [field.name for field in Auth_user._meta.fields]
     list_filter = ('username',)

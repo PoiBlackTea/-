@@ -48,8 +48,11 @@ def User_register_view(request):
             username=form.cleaned_data['username'], password=form.cleaned_data['password1'], email=form.cleaned_data['email'])
         user_s = User_SEED.objects.create(
             user=register_user, name='Auth System')
+        auth_user = Auth_user.objects.create(
+            user=register_user, username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
         register_user.save()
         user_s.save()
+        auth_user.save()
         return HttpResponseRedirect('/auth_system/index')
     else:
         return render(request, 'auth_system/register.html', {'form': form})
@@ -68,10 +71,10 @@ def Server_create_SEED(request):
         user_seed.Server_Random = str(serv_random)
         user_seed.Client_Random = str(client_random)
         # something make trouble, maybe the SEED. this way i let SEED < 10^9.
-        user_seed.SEED = int(sha256(
-            f'{client_random}{serv_random}'.encode()).hexdigest(), 16) % pow(10, 9)
+        user_seed.SEED = int(int(sha256(
+            f'{client_random}{serv_random}'.encode()).hexdigest(), 16) % pow(10, 9))
         user_seed.save()
-
+        print(user_seed.SEED)
         """
         print(user_seed.SEED)
         li = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']*8
