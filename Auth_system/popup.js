@@ -66,6 +66,8 @@ function transform(SEED) {
 
 function send_content(username, transform_password) {
     //傳username和password到content.js
+    console.log(transform_password);
+
     chrome.tabs.query({
         active: true,
         currentWindow: true
@@ -73,17 +75,17 @@ function send_content(username, transform_password) {
         var port3 = chrome.tabs.connect(tabs[0].id, {
             name: "padding password"
         });
-        if (transform_password !== '') {
-            port3.postMessage({
-                event: "padding password",
-                username: username,
-                password: transform_password
-            });
-        }
+
+        port3.postMessage({
+            event: "padding password",
+            username: username,
+            password: transform_password
+        });
         port3.onMessage.addListener((response) => {
             console.log(response);
         });
-    });
+
+    })
 }
 
 function get_current_URL(tabs) {

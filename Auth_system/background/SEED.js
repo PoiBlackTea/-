@@ -28,7 +28,6 @@ chrome.runtime.onConnect.addListener(function (port) {
         port.onMessage.addListener(function (message) {
             if (message.event === "transform password") {
                 var orignal_password = message.name;
-                console.log(message.SEED['content']);
                 let mt = new MersenneTwister(message.SEED['content']);
                 for (let i = array.length - 1; i > 0; i--) {
                     let j = Math.floor(mt.rnd() * (i + 1));
