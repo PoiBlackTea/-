@@ -12,7 +12,7 @@ chrome.runtime.onConnect.addListener(function (port) {
             });
         });
     };
-    if (port.name === "P model transform password") {
+    if (port.name === "transform") {
         // B代表白色
         var array = [
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
@@ -28,7 +28,8 @@ chrome.runtime.onConnect.addListener(function (port) {
         port.onMessage.addListener(function (message) {
             if (message.event === "transform password") {
                 var orignal_password = message.name;
-                let mt = new MersenneTwister(message.SEED['content']);
+                let mt = new MersenneTwister(message.SEED);
+                console.log(message.SEED);
                 for (let i = array.length - 1; i > 0; i--) {
                     let j = Math.floor(mt.rnd() * (i + 1));
                     [array[i], array[j]] = [array[j], array[i]];
@@ -53,6 +54,33 @@ chrome.runtime.onConnect.addListener(function (port) {
             port.disconnect();
         });
     };
+    if (port.name === "shuffle array") {
+        // B代表白色
+        var array = [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+        ];
+        port.onMessage.addListener(function (message) {
+            if (message.event === "shuffle array") {
+                let mt = new MersenneTwister(message.SEED);
+                console.log(message.SEED);
+                for (let i = array.length - 1; i > 0; i--) {
+                    let j = Math.floor(mt.rnd() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+            port.postMessage({
+                content: array
+            });
+            port.disconnect();
+        });
+    }
 });
 
 function create_SEED(name) {

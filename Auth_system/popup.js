@@ -1,45 +1,63 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     var SEED;
     var username;
-    var query;
-    var mode_button = document.getElementById('Connect_button');
-    mode_button.addEventListener('click', () => {
+    var mode_button = await new Promise((resolve) => resolve(document.getElementById('Connect_button')));
+    await mode_button.addEventListener('click', async () => {
         username = document.getElementById('username').value;
+        // handle error
         if (document.getElementById('dropdown').value === '') {
             return;
         } else if (username === "") {
             return;
-        } else if (document.getElementById('dropdown').value == 'P_model') {
+        }
+
+        SEED = await new Promise((resolve) => {
+            var port = chrome.runtime.connect({
+                name: "call SEED"
+            });
+            port.postMessage({
+                event: "create SEED",
+                name: username
+            });
+            port.onMessage.addListener(function (response) {
+                resolve(response['content']);
+            });
+        });
+
+        if (document.getElementById('dropdown').value == 'P_model') {
             document.getElementById('password_title').style.display = 'block';
             document.getElementById('myCanvas').style.display = 'none';
         } else if (document.getElementById('dropdown').value == 'PC_model') {
             document.getElementById('password_title').style.display = 'none';
             document.getElementById('myCanvas').style.display = 'block';
+            var port4 = chrome.runtime.connect({
+                name: "shuffle array"
+            });
+            port4.postMessage({
+                event: "shuffle array",
+                SEED: SEED
+            });
+            port4.onMessage.addListener((response) => {
+                create_keyboard(response['content']);
+                create_button();
+            });
         }
         document.getElementById('Auth_button').style.display = 'block';
-        var port = chrome.runtime.connect({
-            name: "call SEED"
-        });
-        port.postMessage({
-            event: "create SEED",
-            name: username
-        });
-        port.onMessage.addListener(function (response) {
-            SEED = response;
-            console.log(SEED);
-        });
 
-        query = {
+        var query = {
             active: true,
             currentWindow: true
         };
         chrome.tabs.query(query, get_current_URL);
     });
 
-    var Auth_button = document.getElementById('Auth_button');
+    var Auth_button = await new Promise((resolve) => resolve(document.getElementById('Auth_button')));
+    await Auth_button.addEventListener("click", async () => {
 
-    Auth_button.addEventListener("click", async () => {
-        var transform_password = await transform(SEED);
+        if (document.getElementById('dropdown').value == 'P_model') {
+            var transform_password = await transform(SEED);
+            username = document.getElementById('username').value;
+        }
         send_content(username, transform_password);
     });
 });
@@ -48,9 +66,10 @@ function transform(SEED) {
 
     if (document.getElementById('dropdown').value == 'P_model') {
         return new Promise((resolve) => {
+            console.log(SEED);
             var orignal_password = document.getElementById('password').value;
             var port2 = chrome.runtime.connect({
-                name: "P model transform password"
+                name: "transform"
             });
             port2.postMessage({
                 event: "transform password",
@@ -66,8 +85,6 @@ function transform(SEED) {
 
 function send_content(username, transform_password) {
     //傳username和password到content.js
-    console.log(transform_password);
-
     chrome.tabs.query({
         active: true,
         currentWindow: true
@@ -144,12 +161,356 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
 
 }
 
-function create_keyboard() {
-    let canvas = document.getElementById("myCanvas")
-    let ctx = canvas.getContext("2d")
+function create_keyboard(array) {
+    let canvas = document.getElementById("myCanvas");
+    let ctx = canvas.getContext("2d");
+    canvas.height = 600;
+    canvas.width = window.innerWidth;
+    let dict_char = {
+        0: ['~', '`'],
+        1: ['!', '1'],
+        2: ['@', '2'],
+        3: ['#', '3'],
+        4: ['$', '4'],
+        5: ['%', '5'],
+        6: ['^', '6'],
+        7: ['&', '7'],
+        8: ['*', '8'],
+        9: ['(', '9'],
+        10: [')', '0'],
+        11: ['_', '-'],
+        12: ['+', '='],
+        13: ['Q', 'q'],
+        14: ['W', 'w'],
+        15: ['E', 'e'],
+        16: ['R', 'r'],
+        17: ['T', 't'],
+        18: ['Y', 'y'],
+        19: ['U', 'u'],
+        20: ['I', 'i'],
+        21: ['O', 'o'],
+        22: ['P', 'p'],
+        23: ['{', '['],
+        24: ['}', ']'],
+        25: ['|', '\\'],
+        26: ['A', 'a'],
+        27: ['S', 's'],
+        28: ['D', 'd'],
+        29: ['F', 'f'],
+        30: ['G', 'g'],
+        31: ['H', 'h'],
+        32: ['J', 'j'],
+        33: ['K', 'k'],
+        34: ['L', 'l'],
+        35: [':', ';'],
+        36: ['"', '\''],
+        37: ['Z', 'z'],
+        38: ['X', 'x'],
+        39: ['C', 'c'],
+        40: ['V', 'v'],
+        41: ['B', 'b'],
+        42: ['N', 'n'],
+        43: ['M', 'm'],
+        44: ['<', ','],
+        45: ['>', '.'],
+        46: ['?', '/'],
+        47: ['SPACE']
+    }
+    color_li = [
+        'LightPink', 'Red', 'Yellow', 'GreenYellow', 'DarkGreen', 'Cyan', 'Blue', 'SlateGray', 'DarkOrange', 'Black', 'Purple', 'Seashell'
+    ]
+    let row_offset = 53;
+    let column_offset = 60;
+    let j = 0;
+    for (let i = 0; i < 13; i++) {
 
-    roundRect(ctx, 5, 5, 50, 50);
-    // To change the color on the rectangle, just manipulate the context
-    ctx.strokeStyle = "rgb(255, 0, 0)";
-    ctx.fillStyle = "rgba(255, 255, 0, .5)";
+        roundRect(ctx, 0 + row_offset * i, 0 + row_offset, 48, 48);
+        ctx.rect(2.5 + row_offset * i, 2.5 + row_offset, 43, 43);
+        ctx.stroke();
+        ctx.beginPath()
+        ctx.fillStyle = color_li[array[2 * i]];
+        ctx.rect(2.5 + row_offset * i, 2.5 + row_offset, 43, 8);
+        ctx.fill();
+        ctx.beginPath()
+        ctx.fillStyle = color_li[array[2 * i + 1]];
+        ctx.rect(2.5 + row_offset * i, 35.5 + row_offset, 43, 8);
+        ctx.fill();
+        ctx.fillStyle = "black";
+        ctx.font = '15px serif';
+        ctx.fillText(dict_char[i][0], 21 + row_offset * i, 15 + column_offset);
+        ctx.font = '15px serif';
+        ctx.fillText(dict_char[i][1], 21 + row_offset * i, 29 + column_offset);
+        ctx.textAlign = "center";
+    }
+    for (let i = 0; i < 13; i++) {
+
+        roundRect(ctx, 12 + row_offset * i, 0 + 2 * column_offset, 48, 48);
+        ctx.rect(14.5 + row_offset * i, 2.5 + 2 * column_offset, 43, 43);
+        ctx.stroke();
+        ctx.beginPath()
+        ctx.fillStyle = color_li[array[2 * i + 26]];
+        ctx.rect(14.5 + row_offset * i, 2.5 + 2 * column_offset, 43, 8);
+        ctx.fill();
+        ctx.beginPath()
+        ctx.fillStyle = color_li[array[2 * i + 27]];
+        ctx.rect(14.5 + row_offset * i, 35.5 + 2 * column_offset, 43, 8);
+        ctx.fill();
+        ctx.fillStyle = "black";
+        ctx.font = '15px serif';
+        ctx.fillText(dict_char[i + 13][0], 33 + row_offset * i, 20 + column_offset * 2);
+        ctx.font = '15px serif';
+        ctx.fillText(dict_char[i + 13][1], 33 + row_offset * i, 34 + column_offset * 2);
+        ctx.textAlign = "center";
+    }
+    for (let i = 0; i < 11; i++) {
+
+        roundRect(ctx, 34 + row_offset * i, 0 + 3 * column_offset, 48, 48);
+        ctx.rect(36.5 + row_offset * i, 2.5 + 3 * column_offset, 43, 43);
+        ctx.stroke();
+        ctx.beginPath()
+        ctx.fillStyle = color_li[array[2 * i + 52]];
+        ctx.rect(36.5 + row_offset * i, 2.5 + 3 * column_offset, 43, 8);
+        ctx.fill();
+        ctx.beginPath()
+        ctx.fillStyle = color_li[array[2 * i + 53]];
+        ctx.rect(36.5 + row_offset * i, 35.5 + 3 * column_offset, 43, 8);
+        ctx.fill();
+        ctx.fillStyle = "black";
+        ctx.font = '15px serif';
+        ctx.fillText(dict_char[i + 26][0], 55 + row_offset * i, 20 + column_offset * 3);
+        ctx.font = '15px serif';
+        ctx.fillText(dict_char[i + 26][1], 55 + row_offset * i, 34 + column_offset * 3);
+        ctx.textAlign = "center";
+    }
+    for (let i = 0; i < 10; i++) {
+
+        roundRect(ctx, 50 + row_offset * i, 0 + 4 * column_offset, 48, 48);
+        ctx.rect(52.5 + row_offset * i, 2.5 + 4 * column_offset, 43, 43);
+        ctx.stroke();
+        ctx.beginPath()
+        ctx.fillStyle = color_li[array[2 * i + 74]];
+        ctx.rect(52.5 + row_offset * i, 2.5 + 4 * column_offset, 43, 8);
+        ctx.fill();
+        ctx.beginPath()
+        ctx.fillStyle = color_li[array[2 * i + 75]];
+        ctx.rect(52.5 + row_offset * i, 35.5 + 4 * column_offset, 43, 8);
+        ctx.fill();
+        ctx.fillStyle = "black";
+        ctx.font = '15px serif';
+        ctx.fillText(dict_char[i + 37][0], 71 + row_offset * i, 20 + column_offset * 4);
+        ctx.font = '15px serif';
+        ctx.fillText(dict_char[i + 37][1], 71 + row_offset * i, 34 + column_offset * 4);
+        ctx.textAlign = "center";
+    }
+
+    roundRect(ctx, 180, 0 + 5 * column_offset, 240, 35);
+    ctx.rect(182.5, 2.5 + 5 * column_offset, 235, 30);
+    ctx.stroke();
+    ctx.beginPath()
+    ctx.fillStyle = color_li[array[94]];
+    ctx.rect(182.5, 2.5 + 5 * column_offset, 235, 6);
+    ctx.fill();
+    ctx.beginPath()
+    ctx.fillStyle = color_li[array[95]];
+    ctx.rect(182.5, 27.5 + 5 * column_offset, 235, 6);
+    ctx.fill();
+    ctx.fillStyle = "black";
+    ctx.font = '15px serif';
+    ctx.fillText(dict_char[47][0], 240 + row_offset, 22 + column_offset * 5);
+    ctx.textAlign = "center";
+}
+
+function create_button() {
+
+    var circles = [];
+    let canvas = document.getElementById("myCanvas");
+    let ctx = canvas.getContext("2d");
+
+    circles.push({
+        id: '0',
+        radius: 65,
+        sAngle: 1.5,
+        eAngle: 1.9,
+        color: 'LightPink'
+    }, {
+        id: '1',
+        radius: 65,
+        sAngle: 1.9,
+        eAngle: 0.3,
+        color: 'Red'
+    }, {
+        id: '2',
+        radius: 65,
+        sAngle: 0.3,
+        eAngle: 0.7,
+        color: 'Yellow'
+    }, {
+        id: '3',
+        radius: 65,
+        sAngle: 0.7,
+        eAngle: 1.1,
+        color: 'GreenYellow'
+    }, {
+        id: '4',
+        radius: 65,
+        sAngle: 1.1,
+        eAngle: 1.5,
+        color: 'DarkGreen'
+    }, {
+        id: '5',
+        radius: 45,
+        sAngle: 1.5,
+        eAngle: 1.9,
+        color: 'Cyan'
+    }, {
+        id: '6',
+        radius: 45,
+        sAngle: 1.9,
+        eAngle: 0.3,
+        color: 'Blue'
+    }, {
+        id: '7',
+        radius: 45,
+        sAngle: 0.3,
+        eAngle: 0.7,
+        color: 'SlateGray'
+    }, {
+        id: '8',
+        radius: 45,
+        sAngle: 0.7,
+        eAngle: 1.1,
+        color: 'DarkOrange'
+    }, {
+        id: '9',
+        radius: 45,
+        sAngle: 1.1,
+        eAngle: 1.5,
+        color: 'Black'
+    }, {
+        id: 'A',
+        radius: 25,
+        sAngle: 0,
+        eAngle: 2,
+        color: 'Purple'
+    });
+    var transform_password = "";
+    canvas.addEventListener('click', (e) => {
+        var pos = {
+            x: e.pageX - canvas.offsetLeft,
+            y: e.pageY - canvas.offsetTop
+        };
+        for (let circle of circles.reverse()) {
+            if (isIntersect(pos, circle)) {
+                transform_password = "".concat(transform_password, circle.id);
+                // alert('click on circle: ' + transform_password);
+                break;
+            }
+        }
+    });
+    var username = document.getElementById('username').value;
+    var Auth_button = document.getElementById('Auth_button');
+    Auth_button.addEventListener("click", () => {
+        console.log(username, transform_password);
+        send_content(username, transform_password);
+        transform_password = "";
+    });
+
+    circles.forEach((element) => {
+        let x = 320,
+            y = 460;
+        ctx.beginPath();
+        ctx.arc(x, y, element.radius, element.sAngle * Math.PI, element.eAngle * Math.PI);
+        ctx.lineTo(x, y);
+        ctx.closePath();
+        ctx.fillStyle = element.color;
+        ctx.stroke();
+        ctx.fill();
+    });
+
+}
+
+function find_angle(A, B, C) {
+    var AB = Math.sqrt(Math.pow(B.x - A.x, 2) + Math.pow(B.y - A.y, 2));
+    var BC = Math.sqrt(Math.pow(B.x - C.x, 2) + Math.pow(B.y - C.y, 2));
+    var AC = Math.sqrt(Math.pow(C.x - A.x, 2) + Math.pow(C.y - A.y, 2));
+    return Math.acos((BC * BC + AB * AB - AC * AC) / (2 * BC * AB)) * 180 / Math.PI;
+}
+
+function isIntersect(point, circle) {
+    let origin = {
+        x: 320,
+        y: 460
+    };
+    let A = {
+        x: 320,
+        y: 395
+    }
+    if (circle.id == '0' || circle.id == '5') {
+        if (Math.sqrt((point.x - origin.x) ** 2 + (point.y - origin.y) ** 2) >= circle.radius)
+            return false;
+        else if (point.x < origin.x || point.y > origin.y)
+            return false;
+        else if (find_angle(A, origin, point) > 72)
+            return false;
+        else if (circle.id == '0' && Math.sqrt((point.x - origin.x) ** 2 + (point.y - origin.y) ** 2) <= 45)
+            return false;
+        else if (circle.id == '5' && Math.sqrt((point.x - origin.x) ** 2 + (point.y - origin.y) ** 2) <= 25)
+            return false;
+        else
+            return true
+    } else if (circle.id == '1' || circle.id == '6') {
+        if (Math.sqrt((point.x - origin.x) ** 2 + (point.y - origin.y) ** 2) >= circle.radius)
+            return false;
+        else if (point.x < origin.x)
+            return false;
+        else if (find_angle(A, origin, point) > 144 || find_angle(A, origin, point) < 72)
+            return false;
+        else if (circle.id == '1' && Math.sqrt((point.x - origin.x) ** 2 + (point.y - origin.y) ** 2) <= 45)
+            return false;
+        else if (circle.id == '6' && Math.sqrt((point.x - origin.x) ** 2 + (point.y - origin.y) ** 2) <= 25)
+            return false;
+        else
+            return true
+    } else if (circle.id == '2' || circle.id == '7') {
+        if (Math.sqrt((point.x - origin.x) ** 2 + (point.y - origin.y) ** 2) >= circle.radius)
+            return false;
+        else if (point.y < origin.y)
+            return false;
+        else if (find_angle(A, origin, point) < 144)
+            return false;
+        else if (circle.id == '2' && Math.sqrt((point.x - origin.x) ** 2 + (point.y - origin.y) ** 2) <= 45)
+            return false;
+        else if (circle.id == '7' && Math.sqrt((point.x - origin.x) ** 2 + (point.y - origin.y) ** 2) <= 25)
+            return false;
+        else
+            return true
+    } else if (circle.id == '3' || circle.id == '8') {
+        if (Math.sqrt((point.x - origin.x) ** 2 + (point.y - origin.y) ** 2) >= circle.radius)
+            return false;
+        else if (point.x > origin.x)
+            return false;
+        else if (find_angle(A, origin, point) > 144 || find_angle(A, origin, point) < 72)
+            return false;
+        else if (circle.id == '3' && Math.sqrt((point.x - origin.x) ** 2 + (point.y - origin.y) ** 2) <= 45)
+            return false;
+        else if (circle.id == '8' && Math.sqrt((point.x - origin.x) ** 2 + (point.y - origin.y) ** 2) <= 25)
+            return false;
+        else
+            return true
+    } else if (circle.id == '4' || circle.id == '9') {
+        if (Math.sqrt((point.x - origin.x) ** 2 + (point.y - origin.y) ** 2) >= circle.radius)
+            return false;
+        else if (point.x > origin.x || point.y > origin.y)
+            return false;
+        else if (find_angle(A, origin, point) > 72)
+            return false;
+        else if (circle.id == '4' && Math.sqrt((point.x - origin.x) ** 2 + (point.y - origin.y) ** 2) <= 45)
+            return false;
+        else if (circle.id == '9' && Math.sqrt((point.x - origin.x) ** 2 + (point.y - origin.y) ** 2) <= 25)
+            return false;
+        else
+            return true
+    } else {
+        return Math.sqrt((point.x - origin.x) ** 2 + (point.y - origin.y) ** 2) < circle.radius
+    }
 }

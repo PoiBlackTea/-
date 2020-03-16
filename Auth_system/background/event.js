@@ -1,3 +1,4 @@
+/*
 var db = {
   warning: ['https://www.kcg.gov.tw/*', 'https://kcginfo.kcg.gov.tw/*'],
   danger: ['https://www.chinatimes.com/*', 'http://www.ctitv.com.tw/*']
@@ -32,3 +33,4 @@ chrome.webRequest.onCompleted.addListener(
   }, //需是陣列型態
   ['blocking']
 )
+*/
