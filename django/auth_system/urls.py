@@ -25,4 +25,3 @@ urlpatterns = [
     path('register/', views.User_register_view),
     path('Serv_Random/', views.Server_create_SEED),
 ]
-## path('P_model/', views.P_model_authentication),

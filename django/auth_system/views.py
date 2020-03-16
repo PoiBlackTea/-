@@ -25,7 +25,8 @@ def login(request):
         return HttpResponseRedirect('index')
     username = request.POST.get('username', '')
     password = request.POST.get('password', '')
-    P_model_password = request.POST.get('P_model_password', '')
+
+    P_model_password = request.POST.get('value', '')
     if P_model_password and username:
         password = P_authentication.mapping(username, P_model_password)
     user = auth.authenticate(username=username, password=password)
@@ -84,22 +85,3 @@ def Server_create_SEED(request):
         return HttpResponse(serv_random)
 
     return render(request, 'auth_system/Server_Random.html', locals())
-
-
-@csrf_exempt
-def P_model_authentication(request):
-    if request.user.is_authenticated:
-        return HttpResponseRedirect('/auth_system/index')
-    user_name = request.POST.get('username', '')
-    P_model_password = request.POST.get('P_password', '')
-    if user_name and P_model_password:
-        user_obj = User.objects.get(username=user_name)
-        user_seed = User_SEED.objects.get(user=user_obj)
-
-    user = auth.authenticate(username=user_name, password=P_model_password)
-    if user is not None and user.is_active:
-        auth.login(request, user)
-        return HttpResponseRedirect('/auth_system/index')
-    else:
-        return render(request, 'auth_system/P model.html', locals())
-    return render(request, 'auth_system/P model.html', locals())
