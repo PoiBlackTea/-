@@ -9,6 +9,11 @@ body {
     white-space: nowrap;
 }
 
+p {
+    font-size: 18px;
+    color: rgb(194, 41, 41);
+}
+
 h1 {
     font-size: 20px;
 }

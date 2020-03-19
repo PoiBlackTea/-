@@ -8,7 +8,7 @@
 </head>
 
 
-<body id='body1'>
+<body>
   <center>
     <h1>Selected Authentication Mode</h1>
     <div id="current_tabs" style="border:2px orange solid;">
@@ -31,11 +31,11 @@
     <div id="canvas">
       <canvas id="myCanvas"></canvas>
       <h3 id="password_title" style="display:none">password:
-        <input type="password" name="password" value="" id="password">
+        <input type="password" name="password" value="" id="password" writeonly="writeonly">
       </h3>
+      <h3 id="PC_title" style="display:none">password:
+        <input id="PC_password" value="" type="password" readonly="readonly">
+      </h3>
+      <button id="Auth_button" style="display:none"><span>Authentication</span></button>
     </div>
-    <button id="Auth_button" style="display:none"><span>Authentication</span></button>
-    <script src="popup.js"></script>
-</body>
-
-</html>
+    <sc
