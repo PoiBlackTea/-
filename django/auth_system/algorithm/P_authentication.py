@@ -13,11 +13,6 @@ def mapping(name, password):
     # 假設白色是B
     li = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B']*8
     ll = shuffle.fisher_yates_shuffle(li, int(user_seed.SEED))
-    """
-    char_li = [
-        '~', '`', '!', '1', '@', '2', '#', '3', '$', '4', '%', '5', '^', '6', '&', '7', '*', '8', '(', '9', ')', '0', '_', '-', '+', '=', 'Q', 'q', 'W', 'w', 'E', 'e', 'R', 'r', 'T', 't', 'Y', 'y', 'U', 'u', 'I', 'i', 'O', 'o', 'P', 'p', '{', '[', '}', ']', '|', '\\', 'A', 'a', 'S', 's', 'D', 'd', 'F', 'f', 'G', 'g', 'H', 'h', 'J', 'j', 'K', 'k', 'L', 'l', ':', ';', '"', '\'', 'Z', 'z', 'X', 'x', 'C', 'c', 'V', 'v', 'B', 'b', 'N', 'n', 'M', 'm', '<', ',', '>', '.', '?', '/', 'SPACE', 'SPACE'
-    ]
-    """
     char_str = '~`!1@2#3$4%5^6&7*8(9)0_-+=QqWwEeRrTtYyUuIiOoPp{[}]|\\AaSsDdFfGgHhJjKkLl:;"\'ZzXxCcVvBbNnMm<,>.?/  '
     pattern = ""
     orignal_password = user_orignal.password

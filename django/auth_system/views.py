@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from _sha256 import sha256
 
-from .algorithm import shuffle, P_authentication
+from .algorithm import shuffle, P_and_PC_authentication
 from .forms import CustomUserCreationForm
 from .models import Auth_user, User_SEED
 
@@ -28,7 +28,7 @@ def login(request):
 
     P_model_password = request.POST.get('value', '')
     if P_model_password and username:
-        password = P_authentication.mapping(username, P_model_password)
+        password = P_and_PC_authentication.mapping(username, P_model_password)
     user = auth.authenticate(username=username, password=password)
     if user is not None and user.is_active:
         auth.login(request, user)
@@ -75,13 +75,7 @@ def Server_create_SEED(request):
         user_seed.SEED = int(int(sha256(
             f'{client_random}{serv_random}'.encode()).hexdigest(), 16) % pow(10, 9))
         user_seed.save()
-        print(user_seed.SEED)
-        """
-        print(user_seed.SEED)
-        li = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']*8
-        ll = shuffle.fisher_yates_shuffle(li, int(user_seed.SEED))
-        print(li)
-        """
+
         return HttpResponse(serv_random)
 
     return render(request, 'auth_system/Server_Random.html', locals())
