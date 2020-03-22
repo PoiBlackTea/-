@@ -68,7 +68,6 @@ function transform(SEED) {
 
     if (document.getElementById('dropdown').value == 'P_model') {
         return new Promise((resolve) => {
-            console.log(SEED);
             var orignal_password = document.getElementById('password').value;
             var port2 = chrome.runtime.connect({
                 name: "transform"

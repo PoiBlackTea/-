@@ -1,3 +1,4 @@
+from decimal import *
 from math import pow
 from secrets import randbits as _randbits
 from traceback import print_exc
@@ -11,7 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from _sha256 import sha256
 
-from .algorithm import shuffle, P_and_PC_authentication
+from .algorithm import P_and_PC_authentication, shuffle
 from .forms import CustomUserCreationForm
 from .models import Auth_user, User_SEED
 
@@ -71,9 +72,9 @@ def Server_create_SEED(request):
         serv_random = _randbits(256)
         user_seed.Server_Random = str(serv_random)
         user_seed.Client_Random = str(client_random)
-        # something make trouble, maybe the SEED. this way i let SEED < 10^9.
-        user_seed.SEED = int(int(sha256(
-            f'{client_random}{serv_random}'.encode()).hexdigest(), 16) % pow(10, 9))
+        # something make trouble, maybe the SEED. this way i let SEED < 2**32.
+        user_seed.SEED = Decimal(int(sha256(f'{client_random}{serv_random}'.encode(
+        )).hexdigest()[-10:], 16)) % Decimal(4294967296)
         user_seed.save()
 
         return HttpResponse(serv_random)

@@ -4,7 +4,7 @@ from math import floor
 def fisher_yates_shuffle(the_list, SEED):
     list_length = len(the_list)
     PRNG = MT19937(SEED)
-    for i in reversed(range(0, list_length)):
+    for i in reversed(range(1, list_length)):
         j = floor(PRNG.rnd()*(i+1))
         the_list[i],  the_list[j] = the_list[j], the_list[i]
     return the_list

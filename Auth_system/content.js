@@ -3,7 +3,6 @@ chrome.runtime.onConnect.addListener(function (port) {
 
         port.onMessage.addListener(function (message) {
             if (message.event === "padding password") {
-                console.log(message.password);
                 document.getElementById("username").value = message.username;
                 document.getElementById("P_model").value = message.password;
                 document.getElementById("button").click();
