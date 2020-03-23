@@ -165,8 +165,8 @@ function create_keyboard(array) {
     let ctx = canvas.getContext("2d");
     canvas.height = 525;
     canvas.width = window.innerWidth;
-    let row_offset = 53;
-    let column_offset = 60;
+    let row_offset = 57;
+    let column_offset = 64;
 
     let color_li = [
         'LightPink', 'Red', 'Yellow', 'GreenYellow', 'DarkGreen', 'Cyan', 'Blue', 'SlateGray', 'DarkOrange', 'Black', 'Purple', 'Seashell'
@@ -174,28 +174,28 @@ function create_keyboard(array) {
     let char_str = '~`!1@2#3$4%5^6&7*8(9)0_-+=QqWwEeRrTtYyUuIiOoPp{[}]|\\AaSsDdFfGgHhJjKkLl:;"\'ZzXxCcVvBbNnMm<,>.?/'
     for (let i = 0; i < 47; i++) {
         if (i < 13) {
-            create_key(1, i, char_str[2 * i], char_str[2 * i + 1], color_li[array[2 * i]], color_li[array[2 * i + 1]], 2.5);
+            create_key(1, i, char_str[2 * i], char_str[2 * i + 1], color_li[array[2 * i]], color_li[array[2 * i + 1]], 4.5);
         } else if (i < 26) {
-            create_key(2, i - 13, char_str[2 * i], char_str[2 * i + 1], color_li[array[2 * i]], color_li[array[2 * i + 1]], 14.5);
+            create_key(2, i - 13, char_str[2 * i], char_str[2 * i + 1], color_li[array[2 * i]], color_li[array[2 * i + 1]], 16.5);
         } else if (i < 37) {
-            create_key(3, i - 26, char_str[2 * i], char_str[2 * i + 1], color_li[array[2 * i]], color_li[array[2 * i + 1]], 36.5);
+            create_key(3, i - 26, char_str[2 * i], char_str[2 * i + 1], color_li[array[2 * i]], color_li[array[2 * i + 1]], 38.5);
         } else {
-            create_key(4, i - 37, char_str[2 * i], char_str[2 * i + 1], color_li[array[2 * i]], color_li[array[2 * i + 1]], 52.5);
+            create_key(4, i - 37, char_str[2 * i], char_str[2 * i + 1], color_li[array[2 * i]], color_li[array[2 * i + 1]], 54.5);
         }
     }
     /* create key */
     function create_key(row, column, upper_char, lower_char, upper_color, lower_color, x_offset) {
 
-        roundRect(ctx, x_offset - 2.5 + row_offset * column, row * column_offset, 48, 48);
-        ctx.rect(x_offset + row_offset * column, 2.5 + row * column_offset, 43, 43);
+        roundRect(ctx, x_offset - 2.5 + row_offset * column, row * column_offset, 50, 50);
+        ctx.rect(x_offset + row_offset * column, 2.5 + row * column_offset, 45, 45);
         ctx.stroke();
         ctx.beginPath()
         ctx.fillStyle = upper_color;
-        ctx.rect(x_offset + row_offset * column, 2.5 + row * column_offset, 43, 8);
+        ctx.rect(x_offset + row_offset * column, 2.5 + row * column_offset, 45, 10);
         ctx.fill();
         ctx.beginPath()
         ctx.fillStyle = lower_color;
-        ctx.rect(x_offset + row_offset * column, 35.5 + row * column_offset, 43, 8);
+        ctx.rect(x_offset + row_offset * column, 35.5 + row * column_offset, 45, 10);
         ctx.fill();
         ctx.fillStyle = "black";
         ctx.font = 'bold 15px Serial';
@@ -317,7 +317,7 @@ function create_button() {
 
     circles.forEach((element) => {
         let x = 600,
-            y = 400;
+            y = 420;
         ctx.beginPath();
         ctx.arc(x, y, element.radius, element.sAngle * Math.PI, element.eAngle * Math.PI);
         ctx.lineTo(x, y);
@@ -340,11 +340,11 @@ function isIntersect(point, circle) {
     /* the circle origin coordinates */
     let origin = {
         x: 600,
-        y: 400
+        y: 420
     };
     let A = {
         x: 600,
-        y: 305
+        y: 325
     }
     /* 65 is second circle radius, 45 is inner circle radius*/
     if (circle.id == '0' || circle.id == '5') {
