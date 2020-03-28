@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.auth.forms import UserCreationForm  # 新增
+from django.contrib.auth.forms import UserCreationForm
 
 
 def register(request):

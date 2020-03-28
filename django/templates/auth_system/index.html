@@ -7,15 +7,15 @@
 </head>
 
 <body>
-    <h2>歡迎來到Auth System</h2>
+    <h2>Welcome to Auth System</h2>
     {% if request.user.is_authenticated %}
     <p>
-        {{request.user}} 您已經登入囉~
-        <a href="logout">登出</a>
+        {{request.user}} You are logged in~
+        <a href="logout">Logout</a>
     </p>
     {% else %}
-    <p>您尚未登入喔~<a href="login">登入</a></p>
-    <p>註冊新帳號!!<a href="register">註冊</a></p>
+    <p>You are not logged in~<a href="login">Login</a></p>
+    <p>Register new account!!<a href="register">Register</a></p>
     {% endif %}
 </body>
 

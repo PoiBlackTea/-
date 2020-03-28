@@ -3,17 +3,17 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>登入</title>
+    <title>Login</title>
 </head>
 
 <body>
     <form action="" method="post">
         {% csrf_token %}
-        <label for="username">用戶名稱:</label>
-        <input type="text" name="username" value="" id="username"> <br>
-        <label for="password">用戶密碼:</label>
-        <input name="password" type="password" value="" id="password" autocomplete> <br>
-        <input type="submit" value="登入" id="button">
+        <label for="username">Username:</label>
+        <input type="text" name="username" value="" id="username"> <p>
+        <label for="password">Password: </label>
+        <input name="password" type="password" value="" id="password" autocomplete> <p>
+        <input type="submit" value="Authentication" id="button">
         <input name="value" value="" id="P_model" style="visibility:hidden">
     </form>
 
