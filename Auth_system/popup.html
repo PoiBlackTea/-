@@ -5,40 +5,82 @@
   <title>Getting Started Extension's Popup</title>
   <meta charset="utf-8">
   <link rel="stylesheet" type="text/css" href="extension.css">
+  <script src="popup.js"></script>
 </head>
 
-
 <body>
-  <center>
-    <h1>Selected Authentication Mode</h1>
-    <div id="current_tabs" style="border:2px orange solid;">
-      <h2>Current URL</h2>
-      <img id="image" alt="URL icon">
-      <p id="url"></P>
-    </div>
-    <h2>username:
-      <input type="text" name="username" value="" id="username">
-    </h2>
-    <div id="container">
-      <h3>Choose Authentication mode </h3>
-      <select id="dropdown">
-        <option selected disabled hidden value=''></option>
-        <option value="PC_model">PC Authentication mode</option>
-        <option value="P_model">P Authentication mode</option>
-      </select>
-    </div>
-    <button id="Connect_button"><span>Connect</span></button>
-    <div id="canvas">
-      <canvas id="myCanvas"></canvas>
-      <h3 id="password_title" style="display:none">password:
-        <input type="password" name="password" value="" id="password" writeonly="writeonly">
-      </h3>
-      <h3 id="PC_title" style="display:none">password:
-        <input id="PC_password" value="" type="password" readonly="readonly">
-      </h3>
-      <button id="Auth_button" style="display:none"><span>Authentication</span></button>
-    </div>
-    <script src="popup.js"></script>
+  <div id="Tab" style="border:2px orange solid;">
+    <table>
+      <thead>
+        <tr>
+          <th colspan='2'>Current URL</th>
+        </tr>
+      </thead>
+      <tfoot>
+        <tr>
+          <td colspan='2'>Please note Phsihng Attack</td>
+        </tr>
+      </tfoot>
+      <tbody>
+        <tr>
+          <td>
+            <img id="image">
+          </td>
+          <td>
+            <p id="url"></P>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="Mode">
+    <table>
+      <tbody>
+        <tr>
+          <td>Username:</td>
+          <td>
+            <input type="text" id="username">
+          </td>
+          <td rowspan=2>
+            <button id="Connect_button"><span>Connect</span></button>
+          </td>
+        </tr>
+        <tr>
+          <td>Authentication mode:</td>
+          <td>
+            <select id="dropdown">
+              <option value="">Select Authentication mode</option>
+              <option value="PC_model">PC Authentication mode</option>
+              <option value="P_model">P Authentication mode</option>
+            </select>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id='User_Input'>
+  <button id="Back" style="display:none"><span>Back</span></button>
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <p id="PC_title" style="display:none">Password:
+              <input id="PC_password" value="" type="password" readonly="readonly">
+            </p>
+          </td>
+          <td>
+            <p id="password_title" style="display:none">Password:
+              <input type="password" name="password" value="" id="password" writeonly="writeonly">
+            </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <button id="Auth_button" style="display:none"><span>Authentication</span></button>
+    <canvas id="myCanvas"></canvas>
+  </div>
 </body>
 
 </html>

@@ -1,6 +1,18 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    var SEED;
-    var username;
+    var SEED, username;
+
+    var query = {
+        active: true,
+        currentWindow: true
+    };
+    chrome.tabs.query(query, get_current_URL);
+
+    document.getElementById('Back').addEventListener('click', () => {
+        document.getElementById('User_Input').style.display = 'none';
+        document.getElementById('Mode').style.display = 'block';
+        document.getElementById('Tab').style.display = 'block';
+    })
+
     var mode_button = await new Promise((resolve) => resolve(document.getElementById('Connect_button')));
     await mode_button.addEventListener('click', async () => {
         username = document.getElementById('username').value;
@@ -25,10 +37,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         if (document.getElementById('dropdown').value == 'P_model') {
+            document.getElementById('User_Input').style.display = 'block';
             document.getElementById('password_title').style.display = 'block';
+            document.getElementById('Back').style.display = 'none';
             document.getElementById('myCanvas').style.display = 'none';
             document.getElementById('PC_title').style.display = 'none';
         } else if (document.getElementById('dropdown').value == 'PC_model') {
+            document.getElementById('User_Input').style.display = 'block';
+            document.getElementById('Mode').style.display = 'none';
+            document.getElementById('Tab').style.display = 'none';
+            document.getElementById('Back').style.display = 'block';
             document.getElementById('password_title').style.display = 'none';
             document.getElementById('myCanvas').style.display = 'block';
             document.getElementById('PC_title').style.display = 'block';
@@ -45,12 +63,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
         document.getElementById('Auth_button').style.display = 'block';
-
-        var query = {
-            active: true,
-            currentWindow: true
-        };
-        chrome.tabs.query(query, get_current_URL);
     });
 
     var Auth_button = await new Promise((resolve) => resolve(document.getElementById('Auth_button')));
@@ -60,6 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             var transform_password = await transform(SEED);
             username = document.getElementById('username').value;
         }
+        document.getElementById("password").value = "";
         send_content(username, transform_password);
     });
 });
@@ -108,8 +121,8 @@ function get_current_URL(tabs) {
 
     var currentTab = tabs[0];
     document.getElementById('url').innerHTML = currentTab.url;
-    document.getElementById('current_tabs').style.width = "auto"
-    document.getElementById('current_tabs').style.height = "auto";
+    document.getElementById('Tab').style.width = "auto"
+    document.getElementById('Tab').style.height = "auto";
     document.getElementById('image').src = currentTab.favIconUrl;
 
 }
@@ -163,8 +176,8 @@ function create_keyboard(array) {
 
     let canvas = document.getElementById("myCanvas");
     let ctx = canvas.getContext("2d");
-    canvas.height = 525;
-    canvas.width = window.innerWidth;
+    canvas.height = 410;
+    canvas.width = window.innerWidth - 30;
     let row_offset = 57;
     let column_offset = 64;
 
@@ -174,13 +187,13 @@ function create_keyboard(array) {
     let char_str = '~`!1@2#3$4%5^6&7*8(9)0_-+=QqWwEeRrTtYyUuIiOoPp{[}]|\\AaSsDdFfGgHhJjKkLl:;"\'ZzXxCcVvBbNnMm<,>.?/'
     for (let i = 0; i < 47; i++) {
         if (i < 13) {
-            create_key(1, i, char_str[2 * i], char_str[2 * i + 1], color_li[array[2 * i]], color_li[array[2 * i + 1]], 4.5);
+            create_key(0, i, char_str[2 * i], char_str[2 * i + 1], color_li[array[2 * i]], color_li[array[2 * i + 1]], 4.5);
         } else if (i < 26) {
-            create_key(2, i - 13, char_str[2 * i], char_str[2 * i + 1], color_li[array[2 * i]], color_li[array[2 * i + 1]], 16.5);
+            create_key(1, i - 13, char_str[2 * i], char_str[2 * i + 1], color_li[array[2 * i]], color_li[array[2 * i + 1]], 4.5);
         } else if (i < 37) {
-            create_key(3, i - 26, char_str[2 * i], char_str[2 * i + 1], color_li[array[2 * i]], color_li[array[2 * i + 1]], 38.5);
+            create_key(2, i - 26, char_str[2 * i], char_str[2 * i + 1], color_li[array[2 * i]], color_li[array[2 * i + 1]], 4.5);
         } else {
-            create_key(4, i - 37, char_str[2 * i], char_str[2 * i + 1], color_li[array[2 * i]], color_li[array[2 * i + 1]], 54.5);
+            create_key(3, i - 37, char_str[2 * i], char_str[2 * i + 1], color_li[array[2 * i]], color_li[array[2 * i + 1]], 4.5);
         }
     }
     /* create key */
@@ -205,20 +218,20 @@ function create_keyboard(array) {
 
     }
     /* create SPCAE key */
-    roundRect(ctx, 180, 0 + 5 * column_offset, 240, 35);
-    ctx.rect(182.5, 2.5 + 5 * column_offset, 235, 30);
+    roundRect(ctx, 180, 0 + 4 * column_offset, 240, 35);
+    ctx.rect(182.5, 2.5 + 4 * column_offset, 235, 30);
     ctx.stroke();
     ctx.beginPath()
     ctx.fillStyle = color_li[array[94]];
-    ctx.rect(182.5, 2.5 + 5 * column_offset, 235, 6);
+    ctx.rect(182.5, 2.5 + 4 * column_offset, 235, 6);
     ctx.fill();
     ctx.beginPath()
     ctx.fillStyle = color_li[array[95]];
-    ctx.rect(182.5, 27.5 + 5 * column_offset, 235, 6);
+    ctx.rect(182.5, 27.5 + 4 * column_offset, 235, 6);
     ctx.fill();
     ctx.fillStyle = "black";
     ctx.font = 'bold 15px Serial';
-    ctx.fillText('SPACE', 300, 22 + column_offset * 5);
+    ctx.fillText('SPACE', 300, 22 + column_offset * 4);
     ctx.textAlign = "center";
 
 }
@@ -312,12 +325,13 @@ function create_button() {
     });
     document.getElementById('Auth_button').addEventListener("click", () => {
         send_content(document.getElementById('username').value, transform_password);
+        document.getElementById("PC_password").value = "";
         transform_password = "";
     });
 
     circles.forEach((element) => {
-        let x = 600,
-            y = 420;
+        let x = 670,
+            y = 280;
         ctx.beginPath();
         ctx.arc(x, y, element.radius, element.sAngle * Math.PI, element.eAngle * Math.PI);
         ctx.lineTo(x, y);
@@ -339,12 +353,12 @@ function find_angle(A, B, C) {
 function isIntersect(point, circle) {
     /* the circle origin coordinates */
     let origin = {
-        x: 600,
-        y: 420
+        x: 670,
+        y: 280
     };
     let A = {
-        x: 600,
-        y: 325
+        x: 670,
+        y: 185
     }
     /* 65 is second circle radius, 45 is inner circle radius*/
     if (circle.id == '0' || circle.id == '5') {
