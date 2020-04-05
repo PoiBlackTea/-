@@ -1,8 +1,9 @@
-chrome.runtime.onConnect.addListener(function (port) {
+chrome.runtime.onConnect.addListener((port) => {
     if (port.name === "call SEED") {
-        port.onMessage.addListener(function (message) {
+        port.onMessage.addListener((message) => {
+            let SEED_Promise;
             if (message.event === "create SEED") {
-                var SEED_Promise = create_SEED(message.name);
+                SEED_Promise = create_SEED(message.name);
             }
             SEED_Promise.then((message) => {
                 port.postMessage({
@@ -13,67 +14,50 @@ chrome.runtime.onConnect.addListener(function (port) {
         });
     };
     if (port.name === "transform") {
-        // B代表白色
-        var array = [
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
-        ];
-        var password;
-        port.onMessage.addListener(function (message) {
+        /* 'B' is for white */
+        const arr = new Array(96).fill(0);
+        arr.forEach((item, index) => arr[index] = (index % 12).toString(16).toUpperCase());
+        port.onMessage.addListener((message) => {
             if (message.event === "transform password") {
-                var orignal_password = message.name;
+                const orignal_password = message.name;
                 let mt = new MersenneTwister(message.SEED);
-                for (let i = array.length - 1; i > 0; i--) {
+                for (let i = arr.length - 1; i > 0; i--) {
                     let j = Math.floor(mt.rnd() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
                 }
-                var char = '~`!1@2#3$4%5^6&7*8(9)0_-+=QqWwEeRrTtYyUuIiOoPp{[}]|\\AaSsDdFfGgHhJjKkLl:;"\'ZzXxCcVvBbNnMm<,>.?/  '
-                password = "";
+                const char = '~`!1@2#3$4%5^6&7*8(9)0_-+=QqWwEeRrTtYyUuIiOoPp{[}]|\\AaSsDdFfGgHhJjKkLl:;"\'ZzXxCcVvBbNnMm<,>.?/ '
+                let password = "";
                 let r_obj = new MersenneTwister();
-                var password_length = orignal_password.length;
+                const password_length = orignal_password.length;
                 for (let i = 0; i < password_length; i++) {
-                    color_indicator = array[char.indexOf(orignal_password[i])];
+                    color_indicator = arr[char.indexOf(orignal_password[i])];
                     if (color_indicator === "B") {
-                        let j = Math.floor(r_obj.rnd() * (11));
+                        let j = Math.floor(r_obj.rnd() * 11);
                         let ch_li = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A'];
                         color_indicator = ch_li[j];
                     }
                     password = ''.concat(password, color_indicator);
                 }
+                port.postMessage({
+                    content: password
+                });
+                port.disconnect();
             }
-            port.postMessage({
-                content: password
-            });
-            port.disconnect();
         });
     };
     if (port.name === "shuffle array") {
-        var array = [
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-        ];
-        port.onMessage.addListener(function (message) {
+        const arr = new Array(96).fill(0);
+        arr.forEach((item, index) => arr[index] = index % 12);
+        port.onMessage.addListener((message) => {
             if (message.event === "shuffle array") {
                 let mt = new MersenneTwister(message.SEED);
-                for (let i = array.length - 1; i > 0; i--) {
+                for (let i = arr.length - 1; i > 0; i--) {
                     let j = Math.floor(mt.rnd() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
                 }
             }
             port.postMessage({
-                content: array
+                content: arr
             });
             port.disconnect();
         });
@@ -82,13 +66,13 @@ chrome.runtime.onConnect.addListener(function (port) {
 
 function create_SEED(name) {
 
-    var formdata = new FormData();
-    var MT_obj = new MersenneTwister();
-    var client_random = MT_obj.int();
+    let formdata = new FormData();
+    let MT_obj = new MersenneTwister();
+    let client_random = MT_obj.int();
     formdata.append('username', name);
     formdata.append('client random', client_random);
 
-    var result = fetch('http://127.0.0.1:8000/auth_system/Serv_Random/', {
+    let result = fetch('http://127.0.0.1:8000/auth_system/Serv_Random/', {
             method: 'POST',
             body: formdata
         })
@@ -99,23 +83,22 @@ function create_SEED(name) {
         }).then(server_random => {
             let bind = ''.concat(client_random, server_random);
 
-            async function digestMessage(message) {
+            let digestHex = (async (message) => {
                 const msgUint8 = new TextEncoder().encode(message); // encode as (utf-8) Uint8Array
                 const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8); // hash the message
                 const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
                 const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
                 return hashHex;
-            }
+            })(bind);
 
-            var digestHex = digestMessage(bind);
-            var SEED = digestHex.then((response) => {
-                let temp = response.slice(response.length - 10, response.length);
+            let SEED = digestHex.then((response) => {
+                let temp = response.slice(-10);
                 return parseInt(String(BigInt(parseInt(temp, 16)) % 4294967296n));
             });
 
             return SEED
         }).catch((err) => {
-            console.log('錯誤:', err);
+            console.log('éŒ¯èª¤:', err);
         });
     return result
 }
